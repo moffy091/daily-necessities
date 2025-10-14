@@ -7,246 +7,246 @@
   <title>日用品ストック表</title>
   <style>
     /* 全体 */
-body {
-  font-family: 'Noto Sans JP', sans-serif;
-  background: rgba(255, 241, 224, 0.211);
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: rgba(255, 241, 224, 0.211);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
 
-header {
-  background-color: #fff1e0;
-  border-bottom: 1px solid #e6d3bf;
-  padding: 1.2rem 2rem;
-}
+    header {
+      background-color: #fff1e0;
+      border-bottom: 1px solid #e6d3bf;
+      padding: 1.2rem 2rem;
+    }
 
-h1 {
-  color: #604029;
-  font-size: 1.4rem;
-  margin: 0.5rem auto;
-  max-width: 800px;
-}
+    h1 {
+      color: #604029;
+      font-size: 1.4rem;
+      margin: 0.5rem auto;
+      max-width: 800px;
+    }
 
-/* メインカード */
-main {
-  max-width: 800px;
-  margin: 2rem auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 0 1rem;
-}
+    /* メインカード */
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
 
-.card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  padding: 1rem 2rem;
-  position: relative;
-  overflow: visible;
-}
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      padding: 1rem 2rem;
+      position: relative;
+      overflow: visible;
+    }
 
-/* フォーム */
-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 1rem;
-  flex-wrap: nowrap;
-}
+    /* フォーム */
+    form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      flex-wrap: nowrap;
+    }
 
-input[type="text"] {
-  flex: 1;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  min-width: 0;
-}
+    input[type="text"] {
+      flex: 1;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      min-width: 0;
+    }
 
-button[type="submit"] {
-  background-color: #ff9800;
-  border: none;
-  color: white;
-  font-weight: bold;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    button[type="submit"] {
+      background-color: #ff9800;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-button[type="submit"]:hover {
-  background-color: #e68900;
-}
+    button[type="submit"]:hover {
+      background-color: #e68900;
+    }
 
-#clear-all {
-  background-color: #c0392b;
-  border: none;
-  color: white;
-  font-weight: bold;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    #clear-all {
+      background-color: #c0392b;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-p {
-  color: #cdc6be;
-  margin: 0;
-  font-size: 0.85rem;
-}
+    p {
+      color: #cdc6be;
+      margin: 0;
+      font-size: 0.85rem;
+    }
 
-/* リスト */
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+    /* リスト */
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-li {
-  background-color: #fafafa;
-  border: 1px dashed #f3f3f3;
-  border-radius: 12px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.6rem 1.2rem;
-  flex-wrap: wrap;
-}
+    li {
+      background-color: #fafafa;
+      border: 1px dashed #f3f3f3;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.6rem 1.2rem;
+      flex-wrap: wrap;
+    }
 
-/* 品名 */
-.item-name {
-  flex: 1;
-  font-size: 1rem;
-  color: #604029;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
+    /* 品名 */
+    .item-name {
+      flex: 1;
+      font-size: 1rem;
+      color: #604029;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
 
-/* ボタン群の配置調整 */
-.button-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: flex-end;
-  flex-shrink: 0;
-}
+    /* ボタン群の配置調整 */
+    .button-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
 
-/* 各ボタン */
-.status-btn,
-.delete-btn {
-  border: none;
-  border-radius: 9999px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: 0.2s;
-  background-color: #fff;
-}
+    /* 各ボタン */
+    .status-btn,
+    .delete-btn {
+      border: none;
+      border-radius: 9999px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      background-color: #fff;
+    }
 
-.status-btn.has-stock {
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
-  font-weight: bold;
-}
+    .status-btn.has-stock {
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+      font-weight: bold;
+    }
 
-.status-btn.no-stock {
-  color: #c62828;
-  border: 1px solid #ef9a9a;
-  font-weight: bold;
-}
+    .status-btn.no-stock {
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+      font-weight: bold;
+    }
 
-.delete-btn {
-  color: #333;
-  border: 1px solid #ccc;
-}
+    .delete-btn {
+      color: #333;
+      border: 1px solid #ccc;
+    }
 
-.delete-btn:hover {
-  background-color: #ccc;
-}
+    .delete-btn:hover {
+      background-color: #ccc;
+    }
 
-/* ドラッグハンドル */
-.drag-handle {
-  width: 28px;
-  height: 24px;
-  cursor: grab;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+    /* ドラッグハンドル */
+    .drag-handle {
+      width: 28px;
+      height: 24px;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-.drag-handle::before {
-  content: '';
-  display: block;
-  width: 16px;
-  height: 3px;
-  background-color: #666;
-  border-radius: 2px;
-  box-shadow:
-    0 5px 0 #666,
-    0 10px 0 #666;
-}
+    .drag-handle::before {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 3px;
+      background-color: #666;
+      border-radius: 2px;
+      box-shadow:
+        0 5px 0 #666,
+        0 10px 0 #666;
+    }
 
-.drag-handle:hover::before {
-  background-color: #ff9800;
-  box-shadow:
-    0 5px 0 #ff9800,
-    0 10px 0 #ff9800;
-}
+    .drag-handle:hover::before {
+      background-color: #ff9800;
+      box-shadow:
+        0 5px 0 #ff9800,
+        0 10px 0 #ff9800;
+    }
 
-.drag-handle:active {
-  cursor: grabbing;
-  opacity: 0.8;
-}
+    .drag-handle:active {
+      cursor: grabbing;
+      opacity: 0.8;
+    }
 
-/* スマホ対応 */
-@media (max-width: 480px) {
-  form{
-    gap: 6px;
-  }
+    /* スマホ対応 */
+    @media (max-width: 480px) {
+      form {
+        gap: 6px;
+      }
 
-  input[type="text"]{
-    font-size:0.9rem;
-    padding: 0.5rem 0.6rem;
-  }
-  button[submit],
-  #clear-all {
-    padding:0.5rem 0.7rem;
-    font-size: 0.85rem;
-    white-space: nowrap;
-  }
+      input[type="text"] {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.6rem;
+      }
 
-  li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 0.6rem 1rem;
-  }
+      button[type="submit"],
+      #clear-all {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
 
-  .button-group {
-    width: 100%;
-    justify-content: flex-end;
-  }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 0.6rem 1rem;
+      }
 
-  .status-btn,
-  .delete-btn {
-    padding: 5px 8px;
-    font-size: 0.8rem;
-  }
+      .button-group {
+        width: 100%;
+        justify-content: flex-end;
+      }
 
-  .drag-handle {
-    width: 22px;
-    height: 20px;
-  }
-}
+      .status-btn,
+      .delete-btn {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+      }
 
+      .drag-handle {
+        width: 22px;
+        height: 20px;
+      }
+    }
   </style>
 </head>
 
@@ -293,8 +293,8 @@ li {
     }
 
     function labelForStatus(inStock) {
-  return inStock ? '◯ 在庫あり' : '× 在庫なし';
-}
+      return inStock ? '◯ 在庫あり' : '× 在庫なし';
+    }
 
     function labelForDelete() {
       return '削除';
@@ -394,7 +394,7 @@ li {
 
         li.addEventListener('drop', () => {
           li.classList.remove('dragging');
-          const newOrder = [...stockList.children].map(li => items[li.dataset.index]);
+          const newOrder = [...stockList.children].map(el => items[el.dataset.index]);
           items = newOrder;
           saveItems();
           renderList();
