@@ -269,6 +269,9 @@
       <ul id="stock-list"></ul>
     </section>
   </main>
+  <!--Sortable.jsを読み込み-->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
 
   <script>
     const form = document.getElementById('stock-form');
@@ -345,6 +348,16 @@
 
       addDragAndDrop();
     }
+    // スマホ対応のドラッグ＆ドロップ
+    new Sortable(stockList, {
+      animation: 150,
+      onEnd: function (evt) {
+        const newOrder = [...stockList.children].map(el => items[el.dataset.index]);
+        items = newOrder;
+        saveItems();
+        renderList();
+      }
+    });
 
     function saveItems() {
       localStorage.setItem('stockItems', JSON.stringify(items));
