@@ -351,6 +351,7 @@
     // スマホ対応のドラッグ＆ドロップ
     new Sortable(stockList, {
       animation: 150,
+      handle: '.drag-handle',
       onEnd: function (evt) {
         const newOrder = [...stockList.children].map(el => items[el.dataset.index]);
         items = newOrder;
