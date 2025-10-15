@@ -129,6 +129,54 @@
       min-width: 0;
     }
 
+
+    /* 数量エリア */
+    .count-area {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.95rem;
+      color: #604029;
+    }
+
+    /* 「数量：」ラベル */
+    .count-area span:first-child {
+      font-weight: 530;
+    }
+
+    /* ＋−ボタン */
+    .count-btn {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 9999px;
+      width: 32px;
+      height: 32px;
+      font-size: 1rem;
+      font-weight: bold;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .count-btn:hover {
+      background-color: #dcdbdb;
+    }
+
+    .count-area span:nth-child(2) {
+      font-weight: 550;
+      margin-right: 4px;
+    }
+
+    .count-btn:active {
+      transform: scale(0.92);
+      background-color: #ffe0b2;
+    }
+
+
     /* ボタン群の配置調整 */
     .button-group {
       display: flex;
@@ -136,6 +184,7 @@
       gap: 10px;
       justify-content: flex-end;
       flex-shrink: 0;
+      margin-left: 10px;
     }
 
     /* 各ボタン */
@@ -234,6 +283,7 @@
       .button-group {
         width: 100%;
         justify-content: flex-end;
+        margin-left: 4px;
       }
 
       .status-btn,
@@ -245,6 +295,17 @@
       .drag-handle {
         width: 22px;
         height: 20px;
+      }
+
+      .count-area {
+        gap: 4px;
+        font-size: 0.85rem;
+      }
+
+      .count-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -281,14 +342,15 @@
 
     if (items.length === 0) {
       items = [
-        { name: "シャンプー", inStock: true },
-        { name: "リンス", inStock: true },
-        { name: "ボディソープ", inStock: true },
-        { name: "食器用洗剤", inStock: true },
-        { name: "洗濯洗剤", inStock: true }
+        { name: "シャンプー", inStock: true, count: 2 },
+        { name: "リンス", inStock: true, count: 2 },
+        { name: "ボディソープ", inStock: true, count: 1 },
+        { name: "食器用洗剤", inStock: true, count: 1 },
+        { name: "洗濯洗剤", inStock: true, count: 1 }
       ];
       localStorage.setItem('stockItems', JSON.stringify(items));
     }
+
 
     // --- ラベルの短縮 ---
     function isNarrow() {
@@ -304,7 +366,7 @@
     }
 
     function renderList() {
-      items.sort((a, b) => Number(a.inStock) - Number(b.inStock));
+      // items.sort((a, b) => Number(a.inStock) - Number(b.inStock));
       stockList.innerHTML = '';
 
       items.forEach((item, index) => {
@@ -315,6 +377,48 @@
         nameSpan.className = 'item-name';
         nameSpan.textContent = item.name;
 
+        // 数量表示と＋−ボタン
+        const countArea = document.createElement('div');
+        countArea.className = 'count-area';
+
+        const qtyLabel = document.createElement('span');
+        qtyLabel.textContent = '数量：';
+
+        const qtyValue = document.createElement('span');
+        qtyValue.textContent = String(item.count ?? 0);
+
+
+        const plusBtn = document.createElement('button');
+        plusBtn.className = 'count-btn';
+        plusBtn.textContent = '＋';
+        plusBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          item.count = (item.count ?? 0) + 1;
+          if (item.count > 0) {
+            item.inStock = true; // 自動的に「在庫あり」に戻す
+          }
+          saveItems();
+          renderList();
+        });
+
+        const minusBtn = document.createElement('button');
+        minusBtn.className = 'count-btn';
+        minusBtn.textContent = '-';
+        minusBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if ((item.count ?? 0) > 0) item.count--;
+
+          if (item.count === 0) {
+            item.inStock = false; // 自動で在庫無しに変更
+          }
+
+          saveItems();
+          renderList();
+        });
+
+        countArea.append(qtyLabel, qtyValue, plusBtn, minusBtn);
+
+        // ボタン群
         const buttonGroup = document.createElement('div');
         buttonGroup.className = 'button-group';
 
@@ -342,7 +446,7 @@
         dragHandle.title = "ドラッグして並び替え";
 
         buttonGroup.append(statusBtn, deleteBtn, dragHandle);
-        li.append(nameSpan, buttonGroup);
+        li.append(nameSpan, countArea, buttonGroup);
         stockList.appendChild(li);
       });
 
@@ -368,7 +472,7 @@
       e.preventDefault();
       const name = itemNameInput.value.trim();
       if (!name) return;
-      items.push({ name, inStock: true });
+      items.push({ name, inStock: true, count: 1 });
       saveItems();
       renderList();
       itemNameInput.value = '';
