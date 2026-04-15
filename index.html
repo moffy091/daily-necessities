@@ -335,21 +335,45 @@
 
 
   <script>
+    // localStorage に保存するキー名を定数化
+    const STORAGE_KEY = 'stockItems';
+
+    // 初回表示だけ使うデータ
+    const defaultItems = [
+      { name: 'シャンプー', inStock: true, count: 2 },
+      { name: 'リンス', inStock: true, count: 2 },
+      { name: 'ボディソープ', inStock: true, count: 1 },
+      { name: '食器用洗剤', inStock: true, count: 1 },
+      { name: '洗濯洗剤', inStock: true, count: 1 }
+    ];
+
+    
     const form = document.getElementById('stock-form');
     const itemNameInput = document.getElementById('item-name');
     const stockList = document.getElementById('stock-list');
-    let items = JSON.parse(localStorage.getItem('stockItems')) || [];
+    const clearAllButton = document.getElementById('clear-all');
 
-    if (items.length === 0) {
-      items = [
-        { name: "シャンプー", inStock: true, count: 2 },
-        { name: "リンス", inStock: true, count: 2 },
-        { name: "ボディソープ", inStock: true, count: 1 },
-        { name: "食器用洗剤", inStock: true, count: 1 },
-        { name: "洗濯洗剤", inStock: true, count: 1 }
-      ];
-      localStorage.setItem('stockItems', JSON.stringify(items));
+    // 保存済みデータを読み込む
+    // まだ一度も保存されていない初回だけ defaultItems を入れる
+    function loadItems() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+
+      if (stored === null) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultItems));
+        return [...defaultItems];
+      }
+
+      // JSON が壊れていた場合も復旧できるようにしておく
+      try {
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [...defaultItems];
+      } catch {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultItems));
+        return [...defaultItems];
+      }
     }
+
+    let items = loadItems();
 
 
     // --- ラベルの短縮 ---
@@ -391,12 +415,11 @@
         const plusBtn = document.createElement('button');
         plusBtn.className = 'count-btn';
         plusBtn.textContent = '＋';
-        plusBtn.addEventListener('click', (e) => {
-          e.preventDefault();
+        plusBtn.type = 'button';
+        plusBtn.addEventListener('click', () => {
+          // 数量を増やしたら、在庫ありに揃える
           item.count = (item.count ?? 0) + 1;
-          if (item.count > 0) {
-            item.inStock = true; // 自動的に「在庫あり」に戻す
-          }
+          item.inStock = item.count > 0;
           saveItems();
           renderList();
         });
@@ -404,14 +427,11 @@
         const minusBtn = document.createElement('button');
         minusBtn.className = 'count-btn';
         minusBtn.textContent = '-';
-        minusBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          if ((item.count ?? 0) > 0) item.count--;
-
-          if (item.count === 0) {
-            item.inStock = false; // 自動で在庫無しに変更
-          }
-
+        minusBtn.type = 'button';
+        minusBtn.addEventListener('click', () => {
+          // 0 未満にならに用にしつつ、数量と在庫状態を同期
+          item.count = Math.max((item.count ?? 0) - 1, 0);
+          item.inStock = item.count > 0;
           saveItems();
           renderList();
         });
@@ -425,8 +445,12 @@
         const statusBtn = document.createElement('button');
         statusBtn.className = `status-btn ${item.inStock ? 'has-stock' : 'no-stock'}`;
         statusBtn.textContent = labelForStatus(item.inStock);
+        statusBtn.type = 'button';
         statusBtn.addEventListener('click', () => {
+          // 在庫状態だけ変えると count と矛盾するので、
+          // 数量を必ず合わせる
           item.inStock = !item.inStock;
+          item.count = item.inStock ? Math.max(item.count ?? 0, 1) : 0;
           saveItems();
           renderList();
         });
@@ -434,6 +458,7 @@
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = labelForDelete();
+        deleteBtn.type = 'button';
         deleteBtn.addEventListener('click', () => {
           items.splice(index, 1);
           saveItems();
@@ -442,30 +467,29 @@
 
         const dragHandle = document.createElement('div');
         dragHandle.className = 'drag-handle';
-        dragHandle.setAttribute('draggable', 'true');
         dragHandle.title = "ドラッグして並び替え";
 
         buttonGroup.append(statusBtn, deleteBtn, dragHandle);
         li.append(nameSpan, countArea, buttonGroup);
         stockList.appendChild(li);
       });
-
-      addDragAndDrop();
     }
-    // スマホ対応のドラッグ＆ドロップ
+
+    // 並び替えは Sortable.jsに一本化
+    // oldIndex/newIndex を使って配列そのものを並べ替える
     new Sortable(stockList, {
       animation: 150,
       handle: '.drag-handle',
       onEnd: function (evt) {
-        const newOrder = [...stockList.children].map(el => items[el.dataset.index]);
-        items = newOrder;
+        const movedItem = items.splice(evt.oldIndex, 1)[0];
+        items.splice(evt.newIndex, 0, movedItem);
         saveItems();
         renderList();
       }
     });
 
     function saveItems() {
-      localStorage.setItem('stockItems', JSON.stringify(items));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     }
 
     form.addEventListener('submit', (e) => {
@@ -477,56 +501,12 @@
       renderList();
       itemNameInput.value = '';
     });
-
-    // ドラッグ&ドロップ
-    function addDragAndDrop() {
-      const dragHandles = document.querySelectorAll('.drag-handle');
-      const listItems = document.querySelectorAll('#stock-list li');
-      let dragStartIndex;
-
-      dragHandles.forEach((handle) => {
-        handle.addEventListener('dragstart', (e) => {
-          const li = handle.closest('li');
-          dragStartIndex = +li.dataset.index;
-          li.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
-        });
-      });
-
-      listItems.forEach((li) => {
-        li.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          const dragging = document.querySelector('.dragging');
-          const current = e.target.closest('li');
-          if (current && dragging !== current) {
-            const list = [...stockList.children];
-            const dragIndex = list.indexOf(dragging);
-            const currentIndex = list.indexOf(current);
-            if (dragIndex < currentIndex) {
-              stockList.insertBefore(dragging, current.nextSibling);
-            } else {
-              stockList.insertBefore(dragging, current);
-            }
-          }
-        });
-
-        li.addEventListener('drop', () => {
-          li.classList.remove('dragging');
-          const newOrder = [...stockList.children].map(el => items[el.dataset.index]);
-          items = newOrder;
-          saveItems();
-          renderList();
-        });
-
-        li.addEventListener('dragend', () => li.classList.remove('dragging'));
-      });
-    }
-
     // 全消去ボタン
-    document.getElementById('clear-all').addEventListener('click', () => {
+    clearAllButton.addEventListener('click', () => {
       if (confirm('全てを削除しますか？')) {
+        //  localStorage を削除せず空配列を保存する
         items = [];
-        localStorage.removeItem('stockItems');
+        saveItems();
         renderList();
       }
     });
