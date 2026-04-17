@@ -188,6 +188,7 @@
     }
 
     /* 各ボタン */
+    .edit-btn,
     .status-btn,
     .delete-btn {
       border: none;
@@ -198,6 +199,17 @@
       transition: 0.2s;
       background-color: #fff;
     }
+
+    .edit-btn {
+      color: #7a4b22;
+      border: 1px solid #e7c39d;
+      font-weight: bold;
+    }
+
+    .edit-btn:hover {
+      background-color: #fff0df;
+    }
+
 
     .status-btn.has-stock {
       color: #2e7d32;
@@ -347,9 +359,14 @@
       { name: '洗濯洗剤', inStock: true, count: 1 }
     ];
 
-    
+    // フォーム要素を取得
+    // 追加ボタンを押した時の処理
     const form = document.getElementById('stock-form');
+    // 入力欄を取得
+    // ユーザーが入力した商品名をここから読む
     const itemNameInput = document.getElementById('item-name');
+    // 一覧を表示する<ul>を取得
+
     const stockList = document.getElementById('stock-list');
     const clearAllButton = document.getElementById('clear-all');
 
@@ -376,24 +393,40 @@
     let items = loadItems();
 
 
-    // --- ラベルの短縮 ---
-    function isNarrow() {
-      return window.matchMedia('(max-width: 420px)').matches;
-    }
-
+    // 在庫状態ボタンに表示する文字を決める関数
+    // inStockがtrueなら在庫あり、false なら在庫し
     function labelForStatus(inStock) {
       return inStock ? '◯ 在庫あり' : '× 在庫なし';
     }
 
+    // 削除ボタンの文字
     function labelForDelete() {
       return '削除';
     }
 
     function renderList() {
-      // items.sort((a, b) => Number(a.inStock) - Number(b.inStock));
       stockList.innerHTML = '';
 
       items.forEach((item, index) => {
+        
+        const editBtn = document.createElement('button');
+
+        editBtn.type = 'button';
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = '編集';
+        editBtn.addEventListener('click', () => {
+          const newName = prompt('商品名を入力してください', item.name);
+
+          if (newName === null) return;
+
+          const trimmedName = newName.trim();
+          if (!trimmedName) return;
+
+          item.name = trimmedName;
+          saveItems();
+          renderList();
+        });
+
         const li = document.createElement('li');
         li.dataset.index = index;
 
@@ -424,15 +457,21 @@
           renderList();
         });
 
+
+        // - ボタンを作る
         const minusBtn = document.createElement('button');
         minusBtn.className = 'count-btn';
-        minusBtn.textContent = '-';
+        minusBtn.textContent = '−'; 
         minusBtn.type = 'button';
+
+        // - ボタンを押した時の処理
         minusBtn.addEventListener('click', () => {
           // 0 未満にならに用にしつつ、数量と在庫状態を同期
           item.count = Math.max((item.count ?? 0) - 1, 0);
           item.inStock = item.count > 0;
+          // 更新したデータを保存
           saveItems();
+          // 画面を描画し直して数量表示を更新
           renderList();
         });
 
@@ -469,7 +508,7 @@
         dragHandle.className = 'drag-handle';
         dragHandle.title = "ドラッグして並び替え";
 
-        buttonGroup.append(statusBtn, deleteBtn, dragHandle);
+        buttonGroup.append(editBtn, statusBtn, deleteBtn, dragHandle);
         li.append(nameSpan, countArea, buttonGroup);
         stockList.appendChild(li);
       });
@@ -488,6 +527,8 @@
       }
     });
 
+    //itemの内容をlocalStorage に保存する
+    // JSON.stringify()で文字列に変換する
     function saveItems() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     }
@@ -510,9 +551,6 @@
         renderList();
       }
     });
-
-    // 画面サイズの変更時
-    window.addEventListener('resize', renderList);
 
     renderList();
   </script>
